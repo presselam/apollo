@@ -1,20 +1,27 @@
 import sys
+import argparse
 
 from assistant import Assistant
 from display import NotePad
 
-COLOR_SYSTEM = 51
-COLOR_USER = 118
-
 def main(argv: list):
 
-    apollo = Assistant()
+    parser = argparse.ArgumentParser(description = 'apollo chat bot')
+    parser.add_argument('-c', '--code', action='store_true', dest='code', help='only respond in code snippets')
+    parser.add_argument('prompt', nargs=argparse.REMAINDER, help='an initial prompt')
+    opts = parser.parse_args(args=argv)
+
+    system = 'you are a helpful assistant'
+    if opts.code:
+        system = 'only respond in code snippets'
+
+    apollo = Assistant(system=system)
     display = NotePad()
 
     display.print_header('Apollo')
 
-    if len(argv) > 0:
-        prompt = ' '.join(argv)
+    if len(opts.prompt) > 0:
+        prompt = ' '.join(opts.prompt)
         display.print_prompt(prompt)
     else:
         prompt = display.prompt_user()

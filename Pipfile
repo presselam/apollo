@@ -4,11 +4,11 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [packages]
-openai = '*'
+openai = '==1.12.0'
+pygments = '==2.17.2'
 
 [dev-packages]
-pyinstaller = '*'
-
+pyinstaller = '==6.4.0'
 
 [requires]
 python_version = "3.11"
