@@ -1,14 +1,34 @@
+import pickle
+import uuid
+
 from openai import OpenAI
+
+from configuration import Configuration
+
+CONFIG = Configuration()
 
 
 class Assistant:
     def __init__(self, model: str = None, system: str = None):
         self.client = OpenAI()
+        self.chat_id = str(uuid.uuid4())
         self.model = model or "gpt-3.5-turbo"
         self.system = system or "you are a source code generator"
         self.messages = [
             {"role": "system", "content": self.system},
         ]
+
+    def historyId(self):
+        return self.chat_id
+
+    def loadHistory(self, id: str):
+        self.chat_id = id
+        try:
+            with open(f"{CONFIG.history_dir}/{self.chat_id}", "rb") as fh:
+                self.messages = pickle.load(fh)
+            return True
+        except FileNotFoundError:
+            return False
 
     def chat(self, prompt: str, commit: bool = True) -> str:
         self.messages.append({"role": "user", "content": prompt})
@@ -31,5 +51,8 @@ class Assistant:
             answer = response.choices[0].message.content
 
         self.messages.append({"role": "assistant", "content": answer})
+
+        with open(f"{CONFIG.history_dir}/{self.chat_id}", "wb") as fh:
+            pickle.dump(self.messages, fh)
 
         return answer
