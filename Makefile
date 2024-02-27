@@ -1,13 +1,14 @@
 SOURCES := src/*.py
 PYCS := $(PY_FILES:.py=.pyc)
 
+.DEFAULT_GOAL : build
 
-.PHONY : env build
+.PHONY : env build install
 
-env:
+Pipfile.lock : Pipfile
 	pipenv install --dev
 
-dist/apollo: $(SOURCES)
+dist/apollo: Pipfile.lock $(SOURCES)
 	pipenv run pyinstaller --onefile --name apollo src/main.py
 
 build : dist/apollo	$(SOURCES)
