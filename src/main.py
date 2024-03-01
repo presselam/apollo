@@ -7,7 +7,8 @@ from display import NotePad
 def main(argv: list):
 
     parser = argparse.ArgumentParser(description = 'apollo chat bot')
-    parser.add_argument('-c', '--code', action='store_true', dest='code', help='only respond in code snippets')
+    parser.add_argument('-c', '--codeonly', action='store_true', dest='code', help='only respond in code snippets')
+    parser.add_argument('--canned', action='store_true', dest='canned', help='dont waste credits')
     parser.add_argument('prompt', nargs=argparse.REMAINDER, help='an initial prompt')
     opts = parser.parse_args(args=argv)
 
@@ -27,7 +28,7 @@ def main(argv: list):
         prompt = display.prompt_user()
 
     while prompt is not None:
-        answer = apollo.chat(prompt)
+        answer = apollo.chat(prompt, not opts.canned)
         display.print_response(answer)
         prompt = display.prompt_user()
 

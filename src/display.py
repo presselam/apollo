@@ -1,5 +1,7 @@
 import os
 
+from formatters import splitter, highlighter
+
 CHATWIDTH       = os.get_terminal_size().columns - 8
 COLOR_GUTTER    = 238
 COLOR_SYSTEM    = 51
@@ -37,12 +39,10 @@ class NotePad:
         return response or None
 
     def __printer(self, color: int, data: str):
-        for ln in data.split("\n"):
-            remainder = ln
-            while remainder is not None:
-                parts = split_lines(remainder, CHATWIDTH)
-                self.__horizontal_line(None, '│', parts[0], color)
-                remainder = parts[1]
+        lines = splitter([data], CHATWIDTH)
+        lines = highlighter(lines)
+        for ln in lines:
+            self.__horizontal_line(None, '│', ln, color)
 
 
     def __horizontal_line(self, leader: str, separator: str, data: str = None, data_color: int = COLOR_GUTTER):
@@ -58,16 +58,17 @@ class NotePad:
         if data is None:
             data = colored(COLOR_GUTTER, leader * CHATWIDTH)
         else:
-            padding = CHATWIDTH - 4
+            padding = "\033[G\033[" + str(CHATWIDTH+5) + "C"
             if "```" in data:
                 if self.quote:
-                    data = "\u2514" + "\u2500" * padding + "\u2518"
+                    data = "\u2514" + "\u2500" * (CHATWIDTH-4) + "\u2518"
                 else:
-                    data = "\u250C" + "\u2500" * padding + "\u2510"
+                    data = "\u250C" + "\u2500" * (CHATWIDTH-4) + "\u2510"
                 self.quote = not self.quote
             else:
                 if self.quote:
-                    pad = ' ' * (padding - len(data))
+#                     pad = ' ' * (padding - printlen(data))
+                    pad = padding
                     data = colored(COLOR_SYNTAX, data)
                     data = f'\u2502{data}{pad}\u2502'
                 else:
