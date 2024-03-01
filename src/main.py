@@ -6,10 +6,10 @@ from display import NotePad
 
 def main(argv: list):
 
-    parser = argparse.ArgumentParser(description = 'apollo chat bot')
+    parser = argparse.ArgumentParser(description='apollo chat bot')
     parser.add_argument('-c', '--codeonly', action='store_true', dest='code', help='only respond in code snippets')
     parser.add_argument('--canned', action='store_true', dest='canned', help='dont waste credits')
-    parser.add_argument('prompt', nargs=argparse.REMAINDER, help='an initial prompt')
+    parser.add_argument('prompt', nargs='*', help='an initial prompt')
     opts = parser.parse_args(args=argv)
 
     system = 'you are a helpful assistant'
